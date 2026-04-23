@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Calculadora Máquina Avançada | + Moedas (Tanzânia)</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Orbitron', 'Courier New', monospace;
+            padding: 16px;
+            margin: 0;
+        }
+
+        /* Container principal estilo máquina retro-futurista */
+        .machine-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(20, 28, 40, 0.7);
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,140,0,0.3);
+        }
+
+        /* Tabs animadas */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            background: #1e2a3a;
+            color: #8aaec0;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: none;
+            font-family: monospace;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .tab.active {
+            background: radial-gradient(circle at 30% 10%, #ff9f2e, #ff6a00);
+            color: white;
+            text-shadow: 0 0 5px rgba(255,100,0,0.8);
+            box-shadow: 0 0 12px #ff8c00, inset 0 1px 0 rgba(255,255,200,0.6);
+            transform: scale(1.02);
+        }
+        .tab:active {
+            transform: scale(0.96);
+            transition: 0.05s;
+        }
+
+        /* Containers */
+        .container {
+            display: none;
+            animation: fadeSlideUp 0.4s ease-out;
+        }
+        .container.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Estilo do visor - estilo máquina */
+        .visor-machine {
+            width: 100%;
+            background: #03070f;
+            border: 2px solid #ff8c2c;
+            border-radius: 24px;
+            padding: 16px 20px;
+            font-size: 2.4rem;
+            font-family: 'Orbitron', 'Courier New', monospace;
+            font-weight: bold;
+            text-align: right;
+            color: #0eff00;
+            text-shadow: 0 0 8px #0eff00, 0 0 2px #0eff00;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 12px rgba(0,255,0,0.2), 0 5px 12px black;
+            transition: all 0.1s linear;
+            background: #010a0f;
+            outline: none;
+        }
+
+        .visor-machine:focus {
+            border-color: #ffaa44;
+            box-shadow: 0 0 0 2px rgba(255,140,0,0.6);
+        }
+
+        /* grade de botões estilo teclado físico */
+        .keyboard-grid {
+            display: grid;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .grid-classic {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .grid-modern {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* Botões animados estilo tecla de máquina */
+        .machine-key {
+            background: linear-gradient(145deg, #2c3548, #1a1f2c);
+            border: none;
+            border-radius: 20px;
+            padding: 16px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            font-family: 'Segoe UI', monospace;
+            color: #f0f3fd;
+            cursor: pointer;
+            transition: all 0.08s linear;
+            box-shadow: 0 5px 0 #0b0e16, 0 2px 12px rgba(0,0,0,0.4);
+            text-align: center;
+            backdrop-filter: blur(4px);
+            letter-spacing: 1px;
+        }
+
+        /* Efeito de pressionar tecla física */
+        .machine-key:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0b0e16;
+            transition: 0.02s;
+        }
+
+        /* Cores especiais animadas para cada tipo */
+        .key-num {
+            background: radial-gradient(circle at 30% 20%, #3e4a60, #222b3a);
+            color: #e2f0ff;
+            box-shadow: 0 5px 0 #121724;
+        }
+        .key-num:active {
+            background: radial-gradient(circle at 30% 20%, #5b6c8a, #2d3748);
+        }
+
+        .key-op {
+            background: radial-gradient(circle at 70% 20%, #ff9f40, #c25200);
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 0 #813d00;
+        }
+        .key-op:active {
+            background: radial-gradient(circle at 70% 20%, #ffb85e, #e06800);
+        }
+
+        .key-func {
+            background: radial-gradient(circle at 30% 30%, #425c7a, #1f3147);
+            color: #ffcf9a;
+            box-shadow: 0 5px 0 #0f1a2a;
+        }
+
+        .key-equal {
+            background: radial-gradient(circle at 40% 30%, #2bd46d, #0f8844);
+            color: white;
+            text-shadow: 0 0 4px #ccffdd;
+            box-shadow: 0 5px 0 #07632e;
+        }
+
+        /* Histórico moderno */
+        .historico-painel {
+            margin-top: 24px;
+            background: #0c1122cc;
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 12px;
+            border: 1px solid #ff8c4a;
+            max-height: 110px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        .historico-painel div {
+            padding: 6px 8px;
+            border-bottom: 1px dashed #ff9933;
+            color: #b9f3ff;
+            animation: fadeIn 0.2s;
+        }
+
+        /* Conversor estilo máquina */
+        .converter-machine {
+            margin-top: 20px;
+            background: #11161faa;
+            border-radius: 24px;
+            padding: 16px;
+            border: 1px solid #ffaa55;
+            backdrop-filter: blur(4px);
+        }
+
+        .converter-machine h3 {
+            margin: 0 0 12px 0;
+            font-size: 1rem;
+            color: #ffb347;
+            letter-spacing: 1px;
+        }
+
+        .conv-input, .conv-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 28px;
+            border: none;
+            background: #222c3c;
+            color: #ffd966;
+            font-weight: bold;
+            font-family: monospace;
+            outline: none;
+            transition: 0.1s;
+        }
+        .conv-input:focus, .conv-select:focus {
+            box-shadow: 0 0 0 2px #ff9500;
+        }
+        .conv-btn {
+            background: #ff9500;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #1e1e1e;
+            transition: 0.1s linear;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #a35200;
+        }
+        .conv-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #a35200;
+        }
+        #resultadoMoeda {
+            margin-top: 12px;
+            text-align: center;
+            font-weight: bold;
+            background: #03090f;
+            padding: 8px;
+            border-radius: 32px;
+            color: #98ff98;
+        }
+
+        /* animação de brilho adicional nos botões */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255,140,0,0.4);}
+            100% { box-shadow: 0 0 0 6px rgba(255,140,0,0);}
+        }
+        .machine-key:focus-visible {
+            animation: pulseGlow 0.5s ease-out;
+        }
+        
+        /* Scroll personalizado */
+        .historico-painel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .historico-painel::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 6px;
+        }
+        .historico-painel::-webkit-scrollbar-thumb {
+            background: #ff8c00;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="machine-container">
+    <!-- Tabs animadas -->
+    <div class="tabs">
+        <div class="tab active" data-tab="classicTab">🕹️ CLÁSSICA</div>
+        <div class="tab" data-tab="modernTab">⚡ MODERNA</div>
+    </div>
+
+    <!-- CALCULADORA CLÁSSICA (teclado próprio) -->
+    <div id="classicTab" class="container active">
+        <input type="text" id="visorClassic" class="visor-machine" readonly>
+        <div class="keyboard-grid grid-classic" id="kbClassic">
+            <!-- Os botões serão gerados via js para manter organização -->
+        </div>
+    </div>
+
+    <!-- CALCULADORA MODERNA + HISTÓRICO + CONVERSOR -->
+    <div id="modernTab" class="container">
+        <input type="text" id="visorModern" class="visor-machine" readonly>
+        <div class="keyboard-grid grid-modern" id="kbModern"></div>
+        <div class="historico-painel" id="historicoModern">
+            <div style="color:#ffaa55;">📋 histórico de resultados</div>
+        </div>
+        <div class="converter-machine">
+            <h3>💱 CONVERSOR DE MOEDAS</h3>
+            <input type="number" id="valorMoeda" class="conv-input" placeholder="Valor" value="1">
+            <select id="deMoeda" class="conv-select">
+                <option value="USD">🇺🇸 USD - Dólar Americano</option>
+                <option value="EUR">🇪🇺 EUR - Euro</option>
+                <option value="MZN">🇲🇿 MZN - Metical (Moçambique)</option>
+                <option value="BRL">🇧🇷 BRL - Real Brasileiro</option>
+                <option value="GBP">🇬🇧 GBP - Libra Esterlina</option>
+                <option value="TZS">🇹🇿 TZS - Shilling Tanzaniano</option>
+            </select>
+            <select id="paraMoeda" class="conv-select">
+                <option value="TZS">🇹🇿 TZS - Shilling Tanzaniano</option>
+                <option value="USD">🇺🇸 USD - Dólar Americano</option>
+                <option value="EUR">🇪🇺 EUR - Euro</option>
+                <option value="MZN">🇲🇿 MZN - Metical (Moçambique)</option>
+                <option value="BRL">🇧🇷 BRL - Real Brasileiro</option>
+                <option value="GBP">🇬🇧 GBP - Libra Esterlina</option>
+            </select>
+            <button class="conv-btn" id="converterBtn">🔁 CONVERTER</button>
+            <p id="resultadoMoeda">---</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 1. Configuração dos teclados físicos das duas calculadoras
+    //    NENHUM evento de teclado do celular será utilizado
+    // --------------------------------------------------------------
+    
+    // Definição dos botões CLÁSSICA (5 colunas)
+    const classicButtons = [
+        { label: "AC", type: "func", action: "cls" }, { label: "DEL", type: "func", action: "back" }, { label: "(", type: "func", action: "add" }, { label: ")", type: "func", action: "add" }, { label: "÷", type: "op", action: "add", val: "/" },
+        { label: "sin", type: "func", action: "add", val: "sin(" }, { label: "cos", type: "func", action: "add", val: "cos(" }, { label: "tan", type: "func", action: "add", val: "tan(" }, { label: "log", type: "func", action: "add", val: "log(" }, { label: "×", type: "op", action: "add", val: "*" },
+        { label: "7", type: "num", action: "add", val: "7" }, { label: "8", type: "num", action: "add", val: "8" }, { label: "9", type: "num", action: "add", val: "9" }, { label: "√", type: "func", action: "add", val: "sqrt(" }, { label: "−", type: "op", action: "add", val: "-" },
+        { label: "4", type: "num", action: "add", val: "4" }, { label: "5", type: "num", action: "add", val: "5" }, { label: "6", type: "num", action: "add", val: "6" }, { label: "xʸ", type: "func", action: "add", val: "^" }, { label: "+", type: "op", action: "add", val: "+" },
+        { label: "1", type: "num", action: "add", val: "1" }, { label: "2", type: "num", action: "add", val: "2" }, { label: "3", type: "num", action: "add", val: "3" }, { label: "0", type: "num", action: "add", val: "0" }, { label: "=", type: "equal", action: "calc" }
+    ];
+    
+    // Definição dos botões MODERNA (4 colunas)
+    const modernButtons = [
+        { label: "C", type: "func", action: "clearMod" }, { label: "⌫", type: "func", action: "delMod" }, { label: "%", type: "func", action: "add", val: "%" }, { label: "/", type: "op", action: "add", val: "/" },
+        { label: "sin", type: "func", action: "funcTrig", val: "sin" }, { label: "cos", type: "func", action: "funcTrig", val: "cos" }, { label: "tan", type: "func", action: "funcTrig", val: "tan" }, { label: "*", type: "op", action: "add", val: "*" },
+        { label: "log", type: "func", action: "funcUnary", val: "log" }, { label: "√", type: "func", action: "funcUnary", val: "sqrt" }, { label: "xʸ", type: "func", action: "add", val: "^" }, { label: "-", type: "op", action: "add", val: "-" },
+        { label: "7", type: "num", action: "add", val: "7" }, { label: "8", type: "num", action: "add", val: "8" }, { label: "9", type: "num", action: "add", val: "9" }, { label: "+", type: "op", action: "add", val: "+" },
+        { label: "4", type: "num", action: "add", val: "4" }, { label: "5", type: "num", action: "add", val: "5" }, { label: "6", type: "num", action: "add", val: "6" }, { label: "=", type: "equal", action: "calcMod" },
+        { label: "1", type: "num", action: "add", val: "1" }, { label: "2", type: "num", action: "add", val: "2" }, { label: "3", type: "num", action: "add", val: "3" }, { label: "0", type: "num", action: "add", val: "0" }
+    ];
+    
+    // Referências aos visores
+    let visorClassic = document.getElementById('visorClassic');
+    let visorModern = document.getElementById('visorModern');
+    let historicoDiv = document.getElementById('historicoModern');
+    
+    // Funções da clássica
+    window.clsClassic = () => { if(visorClassic) visorClassic.value = ""; };
+    window.backClassic = () => { if(visorClassic) visorClassic.value = visorClassic.value.slice(0, -1); };
+    window.addToClassic = (val) => { if(visorClassic) visorClassic.value += val; };
+    window.calcClassic = () => {
+        try {
+            let expr = visorClassic.value;
+            expr = expr.replace(/\^/g, '**');
+            // tratar sin/cos/tan/log/sqrt com Math seguro
+            let res = Function('"use strict";return (' + expr + ')')();
+            if (isNaN(res) || !isFinite(res)) throw new Error();
+            visorClassic.value = res;
+        } catch(e) {
+            visorClassic.value = "ERR";
+            setTimeout(() => { if(visorClassic.value === "ERR") visorClassic.value = ""; }, 900);
+        }
+    };
+    
+    // Funções moderna
+    window.clearModern = () => { if(visorModern) visorModern.value = ""; };
+    window.delModern = () => { if(visorModern) visorModern.value = visorModern.value.slice(0, -1); };
+    window.addToModern = (val) => { if(visorModern) visorModern.value += val; };
+    
+    window.calcModern = () => {
+        try {
+            let expr = visorModern.value;
+            expr = expr.replace(/\^/g, '**');
+            let result = Function('"use strict";return (' + expr + ')')();
+            if (isNaN(result) || !isFinite(result)) throw new Error();
+            visorModern.value = result;
+            // adicionar ao histórico com animação
+            let histItem = document.createElement('div');
+            histItem.textContent = `📐 ${expr} = ${result}`;
+            historicoDiv.prepend(histItem);
+            if (historicoDiv.children.length > 12) historicoDiv.removeChild(historicoDiv.lastChild);
+        } catch (e) {
+            visorModern.value = "ERRO";
+            setTimeout(() => { if(visorModern.value === "ERRO") visorModern.value = ""; }, 800);
+        }
+    };
+    
+    // funções unárias modernas
+    window.funcUnary = (func) => {
+        let current = visorModern.value;
+        if (current === "" || current === "ERRO") return;
+        try {
+            let num = eval(current);
+            let result;
+            if (func === 'sqrt') result = Math.sqrt(num);
+            if (func === 'log') result = Math.log10(num);
+            if (isNaN(result) || !isFinite(result)) throw new Error();
+            visorModern.value = result;
+            let histItem = document.createElement('div');
+            histItem.textContent = `${func}(${current}) = ${result}`;
+            historicoDiv.prepend(histItem);
+            if (historicoDiv.children.length > 12) historicoDiv.removeChild(historicoDiv.lastChild);
+        } catch(e) {
+            visorModern.value = "ERR";
+            setTimeout(() => { if(visorModern.value === "ERR") visorModern.value = ""; }, 700);
+        }
+    };
+    
+    window.funcTrig = (func) => {
+        let current = visorModern.value;
+        if (current === "") return;
+        try {
+            let num = eval(current);
+            let result;
+            if (func === 'sin') result = Math.sin(num);
+            if (func === 'cos') result = Math.cos(num);
+            if (func === 'tan') result = Math.tan(num);
+            if (isNaN(result) || !isFinite(result)) throw new Error();
+            visorModern.value = result;
+            let histItem = document.createElement('div');
+            histItem.textContent = `${func}(${current}) = ${result}`;
+            historicoDiv.prepend(histItem);
+            if (historicoDiv.children.length > 12) historicoDiv.removeChild(historicoDiv.lastChild);
+        } catch(e) {
+            visorModern.value = "DOM_ERR";
+            setTimeout(() => { if(visorModern.value === "DOM_ERR") visorModern.value = ""; }, 700);
+        }
+    };
+    
+    // Montagem dos teclados (sem usar teclado nativo)
+    function buildKeyboard(containerId, buttonsArray, context) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        buttonsArray.forEach(btn => {
+            const button = document.createElement('button');
+            button.textContent = btn.label;
+            let cssClass = 'machine-key ';
+            if (btn.type === 'num') cssClass += 'key-num';
+            else if (btn.type === 'op') cssClass += 'key-op';
+            else if (btn.type === 'func') cssClass += 'key-func';
+            else if (btn.type === 'equal') cssClass += 'key-equal';
+            else cssClass += 'key-func';
+            button.className = cssClass;
+            
+            // Atribuir ação sem depender do teclado externo
+            button.onclick = (e) => {
+                e.stopPropagation();
+                if (btn.action === 'add') {
+                    const val = btn.val !== undefined ? btn.val : btn.label;
+                    if (context === 'classic') addToClassic(val);
+                    else addToModern(val);
+                } 
+                else if (btn.action === 'cls') clsClassic();
+                else if (btn.action === 'back') backClassic();
+                else if (btn.action === 'calc') calcClassic();
+                else if (btn.action === 'clearMod') clearModern();
+                else if (btn.action === 'delMod') delModern();
+                else if (btn.action === 'calcMod') calcModern();
+                else if (btn.action === 'funcUnary') funcUnary(btn.val);
+                else if (btn.action === 'funcTrig') funcTrig(btn.val);
+                else if (btn.action === 'add') {
+                    if(context === 'classic') addToClassic(btn.val);
+                    else addToModern(btn.val);
+                }
+                // Efeito tátil extra
+                button.style.transform = 'translateY(3px)';
+                setTimeout(() => { button.style.transform = ''; }, 90);
+            };
+            container.appendChild(button);
+        });
+    }
+    
+    // Inicializar teclados com os respectivos contextos
+    buildKeyboard('kbClassic', classicButtons, 'classic');
+    buildKeyboard('kbModern', modernButtons, 'modern');
+    
+    // Previnir qualquer input de teclado do celular nos campos
+    const inputs = [document.getElementById('visorClassic'), document.getElementById('visorModern')];
+    inputs.forEach(inp => {
+        if(inp) {
+            inp.addEventListener('keydown', (e) => {
+                e.preventDefault();
+                return false;
+            });
+            inp.addEventListener('keyup', (e) => e.preventDefault());
+            inp.addEventListener('keypress', (e) => e.preventDefault());
+            inp.setAttribute('inputmode', 'none');
+            inp.setAttribute('readonly', 'readonly');
+        }
+    });
+    
+    // Tabs com animação e sem vazamento
+    const tabs = document.querySelectorAll('.tab');
+    const containers = document.querySelectorAll('.container');
+    function openTab(tabId) {
+        containers.forEach(container => container.classList.remove('active'));
+        const activeContainer = document.getElementById(tabId);
+        if(activeContainer) activeContainer.classList.add('active');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        const activeTab = Array.from(tabs).find(t => t.getAttribute('data-tab') === tabId);
+        if(activeTab) activeTab.classList.add('active');
+    }
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const tabId = tab.getAttribute('data-tab');
+            if(tabId) openTab(tabId);
+        });
+    });
+    // garantir sincronia
+    if(!document.querySelector('.tab.active')) tabs[0].classList.add('active');
+    
+    // CONVERSOR DE MOEDAS com API real + TANZÂNIA (TZS)
+    async function converterMoeda() {
+        const valorInput = document.getElementById('valorMoeda');
+        const deSelect = document.getElementById('deMoeda');
+        const paraSelect = document.getElementById('paraMoeda');
+        const resultP = document.getElementById('resultadoMoeda');
+        let valor = parseFloat(valorInput.value);
+        if (isNaN(valor)) valor = 0;
+        const de = deSelect.value;
+        const para = paraSelect.value;
+        resultP.innerHTML = "🔄 carregando taxa (inclui TZS)...";
+        try {
+            const url = `https://api.exchangerate-api.com/v4/latest/${de}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            const taxa = data.rates[para];
+            if (!taxa) throw new Error();
+            const convertido = valor * taxa;
+            resultP.innerHTML = `💱 ${valor.toFixed(2)} ${de}  =  ${convertido.toFixed(4)} ${para}`;
+        } catch (err) {
+            // fallback confiável com taxa realista incluindo TZS (Tanzânia)
+            const mockRates = {
+                USD: 1, EUR: 0.92, GBP: 0.79, BRL: 5.2, MZN: 65.5,
+                TZS: 2680.0   // 1 USD ≈ 2680 Shilling tanzaniano (taxa referencial)
+            };
+            const taxaMock = mockRates[para] / mockRates[de];
+            const convertido = valor * taxaMock;
+            resultP.innerHTML = `💱 ${valor.toFixed(2)} ${de} ≈ ${convertido.toFixed(4)} ${para} (taxa estimada)`;
+        }
+    }
+    const convBtn = document.getElementById('converterBtn');
+    if(convBtn) convBtn.addEventListener('click', converterMoeda);
+    // rodar conversor inicial
+    window.addEventListener('load', () => {
+        converterMoeda();
+        // prevenção extra de qualquer focus com teclado
+        document.querySelectorAll('input, select').forEach(el => {
+            if(el.classList && !el.classList.contains('conv-input')) return;
+            if(el.tagName === 'INPUT' && el.type !== 'button') {
+                el.setAttribute('inputmode', 'none');
+            }
+        });
+    });
+</script>
+</body>
+</html>
